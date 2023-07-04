@@ -62,9 +62,12 @@ plates, coordinates = ocr_license_plate(image)
 
 # Display the OCR results
 for plate, (x1, y1, x2, y2) in zip(plates, coordinates):
-    print("Nomor Plat:", plate)
-    print("Koordinat:", (x1, y1), (x2, y2))
+    print("Plat Nomor:", plate)
+    print("Kordinat:", (x1, y1), (x2, y2))
     print()
+
+    # Convert coordinates to integers
+    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
     # Draw bounding box around the license plate
     cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -73,5 +76,5 @@ for plate, (x1, y1, x2, y2) in zip(plates, coordinates):
 plt.figure(figsize=(8, 6))
 plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 plt.axis('off')
-plt.title('Deteksi plat kendaraan')
+plt.title('Deteksi pLat kendaraan')
 plt.show()
