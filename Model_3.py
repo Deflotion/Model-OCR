@@ -42,7 +42,7 @@ def ocr_license_plate(image):
 
 # Path to the image
 path = r"D:/Lomba BDC/Model OCR/Data Test/"
-image_name = 'DataTest2.png'
+image_name = 'DataTest1.png'
 
 # Load the image using OpenCV
 image = cv2.imread(path + image_name)
@@ -54,7 +54,7 @@ plate_regions = ocr_plate_detection(image)
 plt.figure(figsize=(8, 6))
 plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 plt.axis('off')
-plt.title('Original Image')
+plt.title('Gambar Asli')
 plt.show()
 
 # Perform OCR on the license plate regions
@@ -62,8 +62,8 @@ plates, coordinates = ocr_license_plate(image)
 
 # Display the OCR results
 for plate, (x1, y1, x2, y2) in zip(plates, coordinates):
-    print("License Plate:", plate)
-    print("Coordinates:", (x1, y1), (x2, y2))
+    print("Nomor Plat:", plate)
+    print("Koordinat:", (x1, y1), (x2, y2))
     print()
 
     # Draw bounding box around the license plate
@@ -73,5 +73,5 @@ for plate, (x1, y1, x2, y2) in zip(plates, coordinates):
 plt.figure(figsize=(8, 6))
 plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 plt.axis('off')
-plt.title('License Plate Detection')
+plt.title('Deteksi plat kendaraan')
 plt.show()
