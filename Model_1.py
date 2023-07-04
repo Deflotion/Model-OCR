@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 
 # Load image
 path = r"D:/Lomba BDC/Model OCR/Data Test/"
-image = cv2.imread(path + 'DataTest4.png')
+image = cv2.imread(path + 'DataTest2.png')
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 # Filter and find edges
