@@ -1,60 +1,80 @@
 import cv2
-import imutils
-import easyocr
 import numpy as np
-from matplotlib import pyplot as plt
-import tensorflow as tf
-from keras.applications.densenet import DenseNet121, preprocess_input
+import easyocr
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import imutils
+from imutils import paths
 
-# Load image
+# Fungsi untuk mendeteksi plat kendaraan menggunakan EasyOCR
+def detect_plates(image):
+    # Mengubah gambar ke grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Menerapkan teknik pengurangan noise dan deteksi tepi
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edged = cv2.Canny(blurred, 50, 150)
+
+    # Mencari kontur pada gambar tepi
+    contours, _ = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    plates = []
+
+    # Melakukan loop pada kontur yang dideteksi
+    for contour in contours:
+        # Menghitung area kontur
+        area = cv2.contourArea(contour)
+
+        # Mengecek apakah area kontur memenuhi batasan tertentu
+        if area > 500:
+            # Mendapatkan koordinat dan ukuran bounding box
+            (x, y, w, h) = cv2.boundingRect(contour)
+
+            # Mengekstrak region of interest (ROI)
+            roi = image[y:y + h, x:x + w]
+
+            # Menambahkan ROI ke daftar plat kendaraan yang dideteksi
+            plates.append(roi)
+
+    return plates
+
+# Path gambar
 path = r"D:/Lomba BDC/Model OCR/Data Test/"
-image = cv2.imread(path + 'DataTest2.png')
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+image_path = path + 'DataTest2.png'
 
-# Filter and find edges
-bfilter = cv2.bilateralFilter(gray, 11, 17, 17)
-edged = cv2.Canny(bfilter, 30, 200)
+# Membaca gambar plat kendaraan
+image = cv2.imread(image_path)
 
-# Find contours and sort by area
-contours = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-contours = imutils.grab_contours(contours)
-contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]
+# Menginisialisasi model EasyOCR
+reader = easyocr.Reader(['en'], gpu=False)
 
-# Find the largest rectangle contour
-location = None
-for contour in contours:
-    approx = cv2.approxPolyDP(contour, 10, True)
-    if len(approx) == 4:
-        location = approx
-        break
+# Mendeteksi plat kendaraan
+plates = detect_plates(image)
 
-print(location)
+# Melakukan OCR pada setiap plat kendaraan
+for plate in plates:
+    # Menggunakan EasyOCR untuk mendapatkan teks dari plat
+    results = reader.readtext(plate)
 
-# OCR to Read Text
-if location is not None:
-    (x, y, w, h) = cv2.boundingRect(location)
-    crop_image = gray[y:y + h, x:x + w]
-    resized_image = cv2.resize(crop_image, (224, 224))  # Resize image to fixed input size
+    # Menampilkan hasil OCR dan koordinat pada gambar
+    fig, ax = plt.subplots()
+    ax.imshow(cv2.cvtColor(plate, cv2.COLOR_BGR2RGB))
 
-    # Load pre-trained DenseNet121 model
-    base_model = DenseNet121(weights='imagenet')
+    for (bbox, text, _) in results:
+        # Menghapus spasi dari teks
+        text = text.replace(' ', '')
 
-    # Preprocess the image based on the model's requirements
-    preprocessed_image = preprocess_input(resized_image)
+        # Mendapatkan koordinat bounding box
+        x = bbox[0][0]
+        y = bbox[0][1]
+        width = bbox[1][0] - bbox[0][0]
+        height = bbox[1][1] - bbox[0][1]
 
-    # Expand dimensions to create batch-like input
-    input_image = np.expand_dims(preprocessed_image, axis=0)
+        # Menampilkan teks pada gambar
+        ax.text(x, y, text, fontsize=10, color='red')
 
-    # Extract features from the image
-    features = base_model.predict(input_image)
+        # Menampilkan bounding box pada gambar
+        rect = patches.Rectangle((x, y), width, height, linewidth=1, edgecolor='red', facecolor='none')
+        ax.add_patch(rect)
 
-    # Flatten features and feed into OCR model
-    flattened_features = features.flatten()
-    readOCR = easyocr.Reader(['en'])
-    result = readOCR.readtext(flattened_features)
-    print(result)
-
-# Plot contours
-plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-plt.plot(location[:, 0, 0], location[:, 0, 1], 'r', linewidth=2)
-plt.show()
+    plt.show()
