@@ -1,80 +1,77 @@
 import cv2
-import numpy as np
-import easyocr
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import imutils
-from imutils import paths
+import easyocr
 
-# Fungsi untuk mendeteksi plat kendaraan menggunakan EasyOCR
-def detect_plates(image):
-    # Mengubah gambar ke grayscale
+def ocr_plate_detection(image):
+    # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Menerapkan teknik pengurangan noise dan deteksi tepi
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edged = cv2.Canny(blurred, 50, 150)
+    # Apply adaptive thresholding to segment the characters
+    _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-    # Mencari kontur pada gambar tepi
-    contours, _ = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Find contours of characters
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    plates = []
-
-    # Melakukan loop pada kontur yang dideteksi
+    plate_regions = []
     for contour in contours:
-        # Menghitung area kontur
-        area = cv2.contourArea(contour)
+        x, y, w, h = cv2.boundingRect(contour)
+        aspect_ratio = w / float(h)
 
-        # Mengecek apakah area kontur memenuhi batasan tertentu
-        if area > 500:
-            # Mendapatkan koordinat dan ukuran bounding box
-            (x, y, w, h) = cv2.boundingRect(contour)
+        # Filter out regions that are unlikely to be license plates based on aspect ratio
+        if aspect_ratio > 2 and aspect_ratio < 6:
+            plate_regions.append((x, y, w, h))
 
-            # Mengekstrak region of interest (ROI)
-            roi = image[y:y + h, x:x + w]
+    return plate_regions
 
-            # Menambahkan ROI ke daftar plat kendaraan yang dideteksi
-            plates.append(roi)
+def ocr_license_plate(image):
+    # Initialize the OCR reader
+    reader = easyocr.Reader(['en'])
 
-    return plates
+    # Perform OCR on the image
+    results = reader.readtext(image)
 
-# Path gambar
-path = r"D:/Lomba BDC/Model OCR/Data Test/"
-image_path = path + 'DataTest2.png'
-
-# Membaca gambar plat kendaraan
-image = cv2.imread(image_path)
-
-# Menginisialisasi model EasyOCR
-reader = easyocr.Reader(['en'], gpu=False)
-
-# Mendeteksi plat kendaraan
-plates = detect_plates(image)
-
-# Melakukan OCR pada setiap plat kendaraan
-for plate in plates:
-    # Menggunakan EasyOCR untuk mendapatkan teks dari plat
-    results = reader.readtext(plate)
-
-    # Menampilkan hasil OCR dan koordinat pada gambar
-    fig, ax = plt.subplots()
-    ax.imshow(cv2.cvtColor(plate, cv2.COLOR_BGR2RGB))
-
+    # Extract the recognized text and coordinates
+    plates = []
+    coordinates = []
     for (bbox, text, _) in results:
-        # Menghapus spasi dari teks
-        text = text.replace(' ', '')
+        x, y, w, h = bbox
+        plates.append(text.replace(' ', ''))
+        coordinates.append((x, y, x + w, y + h))
 
-        # Mendapatkan koordinat bounding box
-        x = bbox[0][0]
-        y = bbox[0][1]
-        width = bbox[1][0] - bbox[0][0]
-        height = bbox[1][1] - bbox[0][1]
+    return plates, coordinates
 
-        # Menampilkan teks pada gambar
-        ax.text(x, y, text, fontsize=10, color='red')
+# Path to the image
+path = r"D:/Lomba BDC/Model OCR/Data Test/"
+image_name = 'DataTest2.png'
 
-        # Menampilkan bounding box pada gambar
-        rect = patches.Rectangle((x, y), width, height, linewidth=1, edgecolor='red', facecolor='none')
-        ax.add_patch(rect)
+# Load the image using OpenCV
+image = cv2.imread(path + image_name)
 
-    plt.show()
+# Perform license plate detection
+plate_regions = ocr_plate_detection(image)
+
+# Display the original image
+plt.figure(figsize=(8, 6))
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+plt.title('Original Image')
+plt.show()
+
+# Perform OCR on the license plate regions
+plates, coordinates = ocr_license_plate(image)
+
+# Display the OCR results
+for plate, (x1, y1, x2, y2) in zip(plates, coordinates):
+    print("License Plate:", plate)
+    print("Coordinates:", (x1, y1), (x2, y2))
+    print()
+
+    # Draw bounding box around the license plate
+    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+# Display the image with bounding boxes
+plt.figure(figsize=(8, 6))
+plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+plt.axis('off')
+plt.title('License Plate Detection')
+plt.show()
