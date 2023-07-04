@@ -50,31 +50,24 @@ image = cv2.imread(path + image_name)
 # Perform license plate detection
 plate_regions = ocr_plate_detection(image)
 
-# Display the original image
-plt.figure(figsize=(8, 6))
-plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-plt.axis('off')
-plt.title('Gambar Asli')
-plt.show()
-
 # Perform OCR on the license plate regions
 plates, coordinates = ocr_license_plate(image)
 
 # Display the OCR results
-for plate, (x1, y1, x2, y2) in zip(plates, coordinates):
-    print("Plat Nomor:", plate)
-    print("Kordinat:", (x1, y1), (x2, y2))
+for plate, coords in zip(plates, coordinates):
+    print("Plat kendaraan:", plate)
+    print("koordinat:", coords)
     print()
 
-    # Convert coordinates to integers
-    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+    # # Convert coordinates to integers
+    # x1, y1, x2, y2 = int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3])
 
-    # Draw bounding box around the license plate
-    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # # Draw bounding box around the license plate
+    # cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
 # Display the image with bounding boxes
 plt.figure(figsize=(8, 6))
 plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 plt.axis('off')
-plt.title('Deteksi pLat kendaraan')
+plt.title('Deteksi plat kendaraan')
 plt.show()
