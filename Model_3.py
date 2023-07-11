@@ -1,15 +1,16 @@
 import cv2
 import matplotlib.pyplot as plt
 import easyocr
+import os
 
 def ocr_plate_detection(image):
-    # Convert the image to grayscale
+    # Mengubah gambar menjadi abu-abu
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Apply adaptive thresholding to segment the characters
+    # Melakukan threshold adaptif untuk memisahkan karakter-karakter
     _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-    # Find contours of characters
+    # Mencari kontur karakter
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     plate_regions = []
@@ -17,20 +18,20 @@ def ocr_plate_detection(image):
         x, y, w, h = cv2.boundingRect(contour)
         aspect_ratio = w / float(h)
 
-        # Filter out regions that are unlikely to be license plates based on aspect ratio
+        # Memfilter  yang bukan plat nomor berdasarkan rasio 
         if aspect_ratio > 2 and aspect_ratio < 6:
             plate_regions.append((x, y, w, h))
 
     return plate_regions
 
 def ocr_license_plate(image):
-    # Initialize the OCR reader
+    # Menginisialisasi pembaca OCR
     reader = easyocr.Reader(['en'])
 
-    # Perform OCR on the image
+    # Melakukan OCR pada gambar
     results = reader.readtext(image)
 
-    # Extract the recognized text and coordinates
+    # Menyimpan teks koordinat
     plates = []
     coordinates = []
     for (bbox, text, _) in results:
@@ -40,34 +41,41 @@ def ocr_license_plate(image):
 
     return plates, coordinates
 
-# Path to the image
+
+# Untuk data Train
+# path = r"D:/Lomba BDC/Model OCR/Data Train"
+# angka_urutan = list(range(1, 801))
+# angka_urutan = sorted(angka_urutan)
+
+# for angka in angka_urutan:
+#     image_name = f"DataTrain{angka}.png"
+#     image_path = os.path.join(path, image_name)
+
+#     try:
+#         # Memuat gambar menggunakan OpenCV
+#         image = cv2.imread(image_path)
+
+#         # Melakukan deteksi plat nomor
+#         plate_regions = ocr_plate_detection(image)
+
+#         # Melakukan OCR pada wilayah plat nomor
+#         plates, coordinates = ocr_license_plate(image)
+
+#         # Menampilkan hasil dari model
+#         print(f"Plat kendaraan dari {image_name}: {plates}")
+#         print("-------------------")
+#     except Exception as e:
+#         print(f"Error dalam memproses {image_name}: {str(e)}")
+
+# Untuk data test
 path = r"D:/Lomba BDC/Model OCR/Data Test/"
-image_name = 'DataTest1.png'
-
-# Load the image using OpenCV
+image_name = 'DataTest90.png'
 image = cv2.imread(path + image_name)
-
-# Perform license plate detection
-plate_regions = ocr_plate_detection(image)
-
-# Perform OCR on the license plate regions
 plates, coordinates = ocr_license_plate(image)
 
-# Display the OCR results
-for plate, coords in zip(plates, coordinates):
-    print("Plat kendaraan:", plate)
-    print("koordinat:", coords)
-    print()
+# Menampilkan hasil
+print(f"Plat kendaraan dari {image_name}:{plates}")
 
-    # # Convert coordinates to integers
-    # x1, y1, x2, y2 = int(coords[0]), int(coords[1]), int(coords[2]), int(coords[3])
 
-    # # Draw bounding box around the license plate
-    # cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-# Display the image with bounding boxes
-plt.figure(figsize=(8, 6))
-plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-plt.axis('off')
-plt.title('Deteksi plat kendaraan')
-plt.show()
+
