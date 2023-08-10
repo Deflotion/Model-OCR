@@ -43,39 +43,35 @@ def ocr_license_plate(image):
 
 
 # Untuk data Train
-# path = r"D:/Lomba BDC/Model OCR/Data Train"
-# angka_urutan = list(range(1, 801))
-# angka_urutan = sorted(angka_urutan)
+path = r"D:/Lomba BDC/Model OCR/Data Test"
+angka_urutan = list(range(1, 101))
+angka_urutan = sorted(angka_urutan)
 
-# for angka in angka_urutan:
-#     image_name = f"DataTrain{angka}.png"
-#     image_path = os.path.join(path, image_name)
+for angka in angka_urutan:
+    image_name = f"DataTest{angka}.png"
+    image_path = os.path.join(path, image_name)
 
-#     try:
-#         # Memuat gambar menggunakan OpenCV
-#         image = cv2.imread(image_path)
+    try:
+        # Memuat gambar menggunakan OpenCV
+        image = cv2.imread(image_path)
 
-#         # Melakukan deteksi plat nomor
-#         plate_regions = ocr_plate_detection(image)
+        # Melakukan deteksi plat nomor
+        plate_regions = ocr_plate_detection(image)
 
-#         # Melakukan OCR pada wilayah plat nomor
-#         plates, coordinates = ocr_license_plate(image)
+        # Melakukan OCR pada wilayah plat nomor
+        plates, coordinates = ocr_license_plate(image)
 
-#         # Menampilkan hasil dari model
-#         print(f"Plat kendaraan dari {image_name}: {plates}")
-#         print("-------------------")
-#     except Exception as e:
-#         print(f"Error dalam memproses {image_name}: {str(e)}")
+        # Menampilkan hasil dari model
+        print(f"Plat kendaraan dari {image_name}: {plates}")
+        print("-------------------")
+    except Exception as e:
+        print(f"Error dalam memproses {image_name}: {str(e)}")
 
 # Untuk data test
-path = r"D:/Lomba BDC/Model OCR/Data Test/"
-image_name = 'DataTest90.png'
-image = cv2.imread(path + image_name)
-plates, coordinates = ocr_license_plate(image)
+# path = r"D:/Lomba BDC/Model OCR/Data Test/"
+# image_name = 'DataTest90.png'
+# image = cv2.imread(path + image_name)
+# plates, coordinates = ocr_license_plate(image)
 
-# Menampilkan hasil
-print(f"Plat kendaraan dari {image_name}:{plates}")
-
-
-
-
+# # Menampilkan hasil
+# print(f"Plat kendaraan dari {image_name}:{plates}")
