@@ -27,8 +27,8 @@ def super_resolve_image(input_path, output_path, scale_factor):
             print(f"Processed: {input_image_path} -> {output_image_path}")
 
 if __name__ == "__main__":
-    input_folder = r"D:\Lomba BDC\Model OCR\Data Test"  # Ganti dengan path folder input
-    output_folder = r"D:\Lomba BDC\Model OCR\Datasuperresolusi"  # Ganti dengan path folder output
+    input_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\1. Data Utama\Data Train"  # Ganti dengan path folder input
+    output_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\5. Data_Image_Super-Resolution\Data Train for BDC 2023 - Penyisihan"  # Ganti dengan path folder output
     scale_factor = 2  # Ganti sesuai dengan faktor skalasi yang diinginkan
     
     super_resolve_image(input_folder, output_folder, scale_factor)

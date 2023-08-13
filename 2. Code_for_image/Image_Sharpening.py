@@ -3,9 +3,9 @@ import numpy as np
 import cv2
 
 # Path ke folder gambar input
-input_folder = r"D:\Lomba BDC\Model OCR\Data_Contrast_Enhancement_sharp"
+input_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\1. Data Utama\Data Train"
 # Path ke folder tujuan untuk gambar yang sudah di-sharpen
-output_folder = r"D:\Lomba BDC\Model OCR\Datasharpening3"
+output_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\2. Data_Image_Sharpening\Data Train for BDC 2023 - Penyisihan"
 
 # Membuat folder tujuan jika belum ada
 os.makedirs(output_folder, exist_ok=True)

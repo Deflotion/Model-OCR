@@ -27,6 +27,6 @@ def process_images(input_folder, output_folder):
             print(f"Error reading: {image_file}")
 
 if __name__ == "__main__":
-    input_folder = r"D:\Lomba BDC\Model OCR\Datasharpening2"  # Ganti dengan path folder gambar input
-    output_folder = r"D:\Lomba BDC\Model OCR\Data_Contrast_Enhancement_sharp"  # Ganti dengan path folder tujuan output
+    input_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\1. Data Utama\Data Train"  # Ganti dengan path folder gambar input
+    output_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\3. Data_Contrast_Enhancement\Data Train for BDC 2023 - Penyisihan"  # Ganti dengan path folder tujuan output
     process_images(input_folder, output_folder)

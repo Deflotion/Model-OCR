@@ -30,7 +30,7 @@ def deblur_images_in_folder(input_folder, output_folder):
         deblur_image(image_path, output_folder)
 
 if __name__ == "__main__":
-    input_folder = r"D:\Lomba BDC\Model OCR\Data Test"  # Ganti dengan path folder input gambar
-    output_folder = r"D:\Lomba BDC\Model OCR\Datadeblur"  # Ganti dengan path folder output
+    input_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\1. Data Utama\Data Train"  # Ganti dengan path folder input gambar
+    output_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\6. Data_Deblurring\Data Train for BDC 2023 - Penyisihan"  # Ganti dengan path folder output
     
     deblur_images_in_folder(input_folder, output_folder)

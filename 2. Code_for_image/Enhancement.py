@@ -8,8 +8,8 @@ def apply_filters(image):
     return blurred
 
 # Path folder input dan output
-input_folder = "D:\Lomba BDC\Model OCR\Data Test"
-output_folder = "D:\Lomba BDC\Model OCR\Dataenchancement"
+input_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\1. Data Utama\Data Train"
+output_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\7. Data_Image_Enhancement_Filters\Data Train for BDC 2023 - Penyisihan"
 
 # Membuat folder output jika belum ada
 if not os.path.exists(output_folder):

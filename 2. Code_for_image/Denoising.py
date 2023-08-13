@@ -8,8 +8,8 @@ def denoise_image(input_path, output_path):
     cv2.imwrite(output_path, denoised_image)
 
 # Folder input dan output
-input_folder = r"D:\Lomba BDC\Model OCR\Data Test"
-output_folder = r"D:\Lomba BDC\Model OCR\Denoising"
+input_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\1. Data Utama\Data Train"
+output_folder = r"D:\Lomba BDC\Model OCR\1. Dataset\4. Data_Image_Denoising\Data Train for BDC 2023 - Penyisihan"
 
 # Membuat folder output jika belum ada
 if not os.path.exists(output_folder):
